@@ -1,10 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { UserSettings, CheckList, Tab, PlanDay } from '../types';
-import { GOLDEN_VERSES } from '../constants';
 import { getPlanForDate, getBookById, getDayNumberForDate } from '../services/bibleService';
+import { loadGoldenVerses, getDailyVerse, GoldenVerse } from '../services/goldenVerseService';
 import { format, parseISO, addDays } from 'date-fns';
 import { zhTW } from 'date-fns/locale';
-import { CheckCircle, Circle } from 'lucide-react';
+import { CheckCircle, Circle, Loader2 } from 'lucide-react';
 
 const TOTAL_PLAN_DAYS = 365;
 
@@ -40,12 +40,24 @@ const formatReadingRange = (reading: PlanDay['readings'][0]): string => {
 
 const HomeView: React.FC<HomeViewProps> = ({ settings, checkedReadings, onToggleCheck, onNavigateToBible }) => {
   const today = new Date();
+  const [dailyVerse, setDailyVerse] = useState<GoldenVerse | null>(null);
+  const [isLoadingVerse, setIsLoadingVerse] = useState(true);
 
-  // Random Golden Verse (stable for the session usually, but for now random on render)
-  // To make it stable per day, we could seed it with the date string.
-  const dailyVerse = useMemo(() => {
-    const seed = today.getDate() % GOLDEN_VERSES.length;
-    return GOLDEN_VERSES[seed];
+  // Load golden verses on mount
+  useEffect(() => {
+    const loadVerses = async () => {
+      setIsLoadingVerse(true);
+      try {
+        const verses = await loadGoldenVerses();
+        const verse = getDailyVerse(verses, today);
+        setDailyVerse(verse);
+      } catch (error) {
+        console.error('Error loading daily verse:', error);
+      } finally {
+        setIsLoadingVerse(false);
+      }
+    };
+    loadVerses();
   }, []);
 
   const plan = getPlanForDate(today, settings.startDate);
@@ -61,13 +73,23 @@ const HomeView: React.FC<HomeViewProps> = ({ settings, checkedReadings, onToggle
       </div>
 
       {/* Golden Verse Card */}
-      <div className="bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg">
-        <p className="text-lg font-medium leading-relaxed mb-4">
-          {dailyVerse.text}
-        </p>
-        <div className="text-right text-sm opacity-90 font-bold">
-          {dailyVerse.bookName} {dailyVerse.reference}
-        </div>
+      <div className="bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl p-6 text-white shadow-lg min-h-[120px]">
+        {isLoadingVerse ? (
+          <div className="flex items-center justify-center h-full">
+            <Loader2 className="h-6 w-6 animate-spin opacity-70" />
+          </div>
+        ) : dailyVerse ? (
+          <>
+            <p className="text-lg font-medium leading-relaxed mb-4">
+              {dailyVerse.text}
+            </p>
+            <div className="text-right text-sm opacity-90 font-bold">
+              {dailyVerse.bookName} {dailyVerse.reference}
+            </div>
+          </>
+        ) : (
+          <p className="text-lg opacity-70">載入金句中...</p>
+        )}
       </div>
 
       {/* Progress Bar */}
