@@ -264,7 +264,9 @@ export async function loadPlanData(): Promise<DayPlan[]> {
 
     try {
         // Fetch the plan file from the public folder
-        const response = await fetch('/bible_plan/plan');
+        // Use BASE_URL for correct path in both dev and production (GitHub Pages)
+        const baseUrl = import.meta.env.BASE_URL || '/';
+        const response = await fetch(`${baseUrl}bible_plan/plan`);
         if (!response.ok) {
             throw new Error('Failed to load plan file');
         }

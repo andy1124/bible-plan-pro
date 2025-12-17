@@ -23,11 +23,14 @@ export interface BibleVersionInfo {
     file: string;
 }
 
+// Get base URL for correct path in both dev and production (GitHub Pages)
+const getBaseUrl = (): string => import.meta.env.BASE_URL || '/';
+
 // Available Bible versions
 export const BIBLE_VERSIONS: BibleVersionInfo[] = [
-    { id: 'zh_cuv', name: '和合本', displayName: '和合本 (CUV)', file: '/bible/zh_cuv.json' },
-    { id: 'zh_ncv', name: '新譯本', displayName: '新譯本 (NCV)', file: '/bible/zh_ncv.json' },
-    { id: 'en_kjv', name: 'KJV', displayName: 'King James Version', file: '/bible/en_kjv.json' },
+    { id: 'zh_cuv', name: '和合本', displayName: '和合本 (CUV)', file: 'bible/zh_cuv.json' },
+    { id: 'zh_ncv', name: '新譯本', displayName: '新譯本 (NCV)', file: 'bible/zh_ncv.json' },
+    { id: 'en_kjv', name: 'KJV', displayName: 'King James Version', file: 'bible/en_kjv.json' },
 ];
 
 // Mapping from our book IDs to JSON abbreviations
@@ -81,7 +84,9 @@ export async function loadBibleVersion(version: BibleVersion): Promise<BibleBook
     const loadPromise = (async () => {
         try {
             console.log('Loading Bible version:', version);
-            const response = await fetch(versionInfo.file);
+            // Use BASE_URL for correct path in both dev and production
+            const fileUrl = `${getBaseUrl()}${versionInfo.file}`;
+            const response = await fetch(fileUrl);
             if (!response.ok) {
                 throw new Error(`Failed to load Bible: ${response.status}`);
             }
