@@ -27,6 +27,8 @@ export interface PlanDay {
     bookId: string;
     chapterStart: number;
     chapterEnd: number;
+    verseStart?: number;
+    verseEnd?: number;
   }[];
 }
 

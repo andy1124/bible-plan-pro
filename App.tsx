@@ -7,6 +7,8 @@ import FavoritesView from './components/FavoritesView';
 import SettingsView from './components/SettingsView';
 import { Tab, UserSettings, CheckList, Verse } from './types';
 import { format } from 'date-fns';
+import { initializePlanData, initializeBibleData } from './services/bibleService';
+import { getVersionFromSettings } from './services/bibleContentService';
 
 const DEFAULT_SETTINGS: UserSettings = {
   startDate: format(new Date(), 'yyyy-MM-dd'),
@@ -18,7 +20,7 @@ const DEFAULT_SETTINGS: UserSettings = {
 function App() {
   // --- State ---
   const [activeTab, setActiveTab] = useState<Tab>(Tab.HOME);
-  
+
   // Persisted Data
   const [settings, setSettings] = useState<UserSettings>(() => {
     const saved = localStorage.getItem('bible_settings');
@@ -37,8 +39,22 @@ function App() {
 
   // Navigation State for Deep Linking inside Bible Tab
   const [navTarget, setNavTarget] = useState<{ bookId: string; chapter: number } | null>(null);
+  const [planLoaded, setPlanLoaded] = useState(false);
 
   // --- Effects ---
+
+  // Initialize plan and Bible data on app startup
+  useEffect(() => {
+    const initializeData = async () => {
+      await initializePlanData();
+      setPlanLoaded(true);
+      // Preload Bible data based on user settings
+      const version = getVersionFromSettings(settings.bibleVersion);
+      await initializeBibleData(version);
+    };
+    initializeData();
+  }, []);
+
   useEffect(() => {
     localStorage.setItem('bible_settings', JSON.stringify(settings));
   }, [settings]);
@@ -69,25 +85,25 @@ function App() {
 
   const handleAddToFavorites = (verse: Verse) => {
     setFavorites(prev => {
-       // Avoid duplicates
-       if (prev.some(f => f.bookId === verse.bookId && f.chapter === verse.chapter && f.verse === verse.verse)) {
-           return prev;
-       }
-       return [...prev, verse];
+      // Avoid duplicates
+      if (prev.some(f => f.bookId === verse.bookId && f.chapter === verse.chapter && f.verse === verse.verse)) {
+        return prev;
+      }
+      return [...prev, verse];
     });
   };
 
   const handleRemoveFavorite = (verse: Verse) => {
-      setFavorites(prev => prev.filter(f => !(f.bookId === verse.bookId && f.chapter === verse.chapter && f.verse === verse.verse)));
+    setFavorites(prev => prev.filter(f => !(f.bookId === verse.bookId && f.chapter === verse.chapter && f.verse === verse.verse)));
   };
 
   const handleTabChange = (tab: Tab) => {
-      setActiveTab(tab);
-      // Reset nav target if navigating away from Bible manually, 
-      // or if clicking Bible tab directly (optional UX choice)
-      if (tab !== Tab.BIBLE) {
-          setNavTarget(null);
-      }
+    setActiveTab(tab);
+    // Reset nav target if navigating away from Bible manually, 
+    // or if clicking Bible tab directly (optional UX choice)
+    if (tab !== Tab.BIBLE) {
+      setNavTarget(null);
+    }
   };
 
   // --- View Rendering ---
@@ -96,16 +112,16 @@ function App() {
     switch (activeTab) {
       case Tab.HOME:
         return (
-          <HomeView 
-            settings={settings} 
-            checkedReadings={checkedReadings} 
+          <HomeView
+            settings={settings}
+            checkedReadings={checkedReadings}
             onToggleCheck={handleToggleCheck}
             onNavigateToBible={handleNavigateToBible}
           />
         );
       case Tab.PLAN:
         return (
-          <PlanView 
+          <PlanView
             settings={settings}
             checkedReadings={checkedReadings}
             onToggleCheck={handleToggleCheck}
@@ -114,25 +130,26 @@ function App() {
         );
       case Tab.BIBLE:
         return (
-          <BibleView 
-             initialBookId={navTarget?.bookId}
-             initialChapter={navTarget?.chapter}
-             onAddToFavorites={handleAddToFavorites}
-             favorites={favorites}
+          <BibleView
+            initialBookId={navTarget?.bookId}
+            initialChapter={navTarget?.chapter}
+            onAddToFavorites={handleAddToFavorites}
+            favorites={favorites}
+            settings={settings}
           />
         );
       case Tab.FAVORITES:
         return (
-          <FavoritesView 
-             favorites={favorites} 
-             onRemove={handleRemoveFavorite}
+          <FavoritesView
+            favorites={favorites}
+            onRemove={handleRemoveFavorite}
           />
         );
       case Tab.SETTINGS:
         return (
-          <SettingsView 
-            settings={settings} 
-            onUpdateSettings={setSettings} 
+          <SettingsView
+            settings={settings}
+            onUpdateSettings={setSettings}
           />
         );
       default:
