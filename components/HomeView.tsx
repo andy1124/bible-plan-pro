@@ -12,7 +12,7 @@ interface HomeViewProps {
   settings: UserSettings;
   checkedReadings: CheckList;
   onToggleCheck: (key: string) => void;
-  onNavigateToBible: (bookId: string, chapter: number) => void;
+  onNavigateToReading: (reading: PlanDay['readings'][0], dateStr: string) => void;
 }
 
 /**
@@ -38,7 +38,7 @@ const formatReadingRange = (reading: PlanDay['readings'][0]): string => {
   return `${chapterStart}-${chapterEnd}`;
 };
 
-const HomeView: React.FC<HomeViewProps> = ({ settings, checkedReadings, onToggleCheck, onNavigateToBible }) => {
+const HomeView: React.FC<HomeViewProps> = ({ settings, checkedReadings, onToggleCheck, onNavigateToReading }) => {
   const today = new Date();
   const [dailyVerse, setDailyVerse] = useState<GoldenVerse | null>(null);
   const [isLoadingVerse, setIsLoadingVerse] = useState(true);
@@ -132,7 +132,7 @@ const HomeView: React.FC<HomeViewProps> = ({ settings, checkedReadings, onToggle
             <div
               key={index}
               className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center justify-between cursor-pointer active:bg-gray-50"
-              onClick={() => onNavigateToBible(reading.bookId, reading.chapterStart)}
+              onClick={() => onNavigateToReading(reading, dateStr)}
             >
               <div className="flex items-center space-x-4">
                 <button

@@ -22,7 +22,7 @@ interface PlanViewProps {
   settings: UserSettings;
   checkedReadings: CheckList;
   onToggleCheck: (key: string) => void;
-  onNavigateToBible: (bookId: string, chapter: number) => void;
+  onNavigateToReading: (reading: PlanDay['readings'][0], dateStr: string) => void;
 }
 
 const TOTAL_PLAN_DAYS = 365;
@@ -84,7 +84,7 @@ const isDayPartiallyCompleted = (date: Date, startDateStr: string, checkedReadin
   });
 };
 
-const PlanView: React.FC<PlanViewProps> = ({ settings, checkedReadings, onToggleCheck, onNavigateToBible }) => {
+const PlanView: React.FC<PlanViewProps> = ({ settings, checkedReadings, onToggleCheck, onNavigateToReading }) => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const today = new Date();
@@ -281,7 +281,7 @@ const PlanView: React.FC<PlanViewProps> = ({ settings, checkedReadings, onToggle
                 <div
                   key={index}
                   className="bg-white p-4 rounded-xl shadow-sm flex items-center justify-between cursor-pointer active:bg-gray-50 transition"
-                  onClick={() => onNavigateToBible(reading.bookId, reading.chapterStart)}
+                  onClick={() => onNavigateToReading(reading, dateStr)}
                 >
                   <div className="flex items-center space-x-4">
                     <button

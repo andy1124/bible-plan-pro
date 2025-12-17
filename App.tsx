@@ -5,7 +5,8 @@ import PlanView from './components/PlanView';
 import BibleView from './components/BibleView';
 import FavoritesView from './components/FavoritesView';
 import SettingsView from './components/SettingsView';
-import { Tab, UserSettings, CheckList, Verse } from './types';
+import ReadingView from './components/ReadingView';
+import { Tab, UserSettings, CheckList, Verse, PlanDay } from './types';
 import { format } from 'date-fns';
 import { initializePlanData, initializeBibleData } from './services/bibleService';
 import { getVersionFromSettings } from './services/bibleContentService';
@@ -16,6 +17,12 @@ const DEFAULT_SETTINGS: UserSettings = {
   notificationsEnabled: false,
   notificationTime: '08:00',
 };
+
+// Reading target for plan-based navigation
+interface ReadingTarget {
+  reading: PlanDay['readings'][0];
+  dateStr: string;
+}
 
 function App() {
   // --- State ---
@@ -39,6 +46,10 @@ function App() {
 
   // Navigation State for Deep Linking inside Bible Tab
   const [navTarget, setNavTarget] = useState<{ bookId: string; chapter: number } | null>(null);
+
+  // Navigation State for Reading View (plan-based multi-chapter reading)
+  const [readingTarget, setReadingTarget] = useState<ReadingTarget | null>(null);
+
   const [planLoaded, setPlanLoaded] = useState(false);
 
   // --- Effects ---
@@ -83,6 +94,16 @@ function App() {
     setActiveTab(Tab.BIBLE);
   };
 
+  // New handler for navigating to reading view (multi-chapter plan reading)
+  const handleNavigateToReading = (reading: PlanDay['readings'][0], dateStr: string) => {
+    setReadingTarget({ reading, dateStr });
+  };
+
+  // Handler to close reading view
+  const handleCloseReading = () => {
+    setReadingTarget(null);
+  };
+
   const handleAddToFavorites = (verse: Verse) => {
     setFavorites(prev => {
       // Avoid duplicates
@@ -104,11 +125,27 @@ function App() {
     if (tab !== Tab.BIBLE) {
       setNavTarget(null);
     }
+    // Close reading view when changing tabs
+    setReadingTarget(null);
   };
 
   // --- View Rendering ---
 
   const renderContent = () => {
+    // If reading target is set, show ReadingView overlay
+    if (readingTarget) {
+      return (
+        <ReadingView
+          reading={readingTarget.reading}
+          dateStr={readingTarget.dateStr}
+          onBack={handleCloseReading}
+          onAddToFavorites={handleAddToFavorites}
+          favorites={favorites}
+          settings={settings}
+        />
+      );
+    }
+
     switch (activeTab) {
       case Tab.HOME:
         return (
@@ -116,7 +153,7 @@ function App() {
             settings={settings}
             checkedReadings={checkedReadings}
             onToggleCheck={handleToggleCheck}
-            onNavigateToBible={handleNavigateToBible}
+            onNavigateToReading={handleNavigateToReading}
           />
         );
       case Tab.PLAN:
@@ -125,7 +162,7 @@ function App() {
             settings={settings}
             checkedReadings={checkedReadings}
             onToggleCheck={handleToggleCheck}
-            onNavigateToBible={handleNavigateToBible}
+            onNavigateToReading={handleNavigateToReading}
           />
         );
       case Tab.BIBLE:
@@ -162,7 +199,8 @@ function App() {
       <main className="flex-1 overflow-y-auto hide-scrollbar">
         {renderContent()}
       </main>
-      <TabBar currentTab={activeTab} onTabChange={handleTabChange} />
+      {/* Hide TabBar when in ReadingView */}
+      {!readingTarget && <TabBar currentTab={activeTab} onTabChange={handleTabChange} />}
     </div>
   );
 }
