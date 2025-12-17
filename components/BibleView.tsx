@@ -143,56 +143,54 @@ const BibleView: React.FC<BibleViewProps> = ({ initialBookId, initialChapter, on
   );
 
   const renderReadingView = () => (
-    <div className="pb-24 bg-white min-h-screen">
-      <div className="flex items-center px-4 py-3 sticky top-0 bg-white border-b border-gray-100 z-10">
+    <div className="h-full flex flex-col bg-white">
+      {/* Fixed Header */}
+      <div className="flex-shrink-0 flex items-center px-4 py-3 bg-white border-b border-gray-100">
         <button onClick={handleBack} className="p-2 -ml-2">
           <ChevronLeft size={24} className="text-gray-800" />
         </button>
         <div className="flex-1 text-center font-bold text-lg">
-          {selectedBook?.name} {selectedChapter}
+          {selectedBook?.name} 第 {selectedChapter} 章
         </div>
         <div className="w-8"></div>
       </div>
 
-      <div className="p-6 space-y-6">
-        <div className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white p-6 rounded-2xl shadow-lg mb-8">
-          <h3 className="text-lg font-bold mb-2 text-center">
-            {selectedBook?.name} 第 {selectedChapter} 章
-          </h3>
-        </div>
-
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-            <p className="mt-4 text-gray-500">載入經文中...</p>
-          </div>
-        ) : verses.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16">
-            <p className="text-gray-500">無法載入此章節經文</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {verses.map((v, i) => (
-              <div key={i} className="flex gap-3 group">
-                <span className="text-xs font-bold text-gray-400 mt-1 w-6 shrink-0">{v.verse}</span>
-                <div className="flex-1">
-                  <p className="text-lg leading-relaxed text-gray-800 font-serif">
-                    {v.text}
-                  </p>
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="p-6 pb-24 space-y-6">
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+              <p className="mt-4 text-gray-500">載入經文中...</p>
+            </div>
+          ) : verses.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-16">
+              <p className="text-gray-500">無法載入此章節經文</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {verses.map((v, i) => (
+                <div key={i} className="flex gap-3 group">
+                  <span className="text-xs font-bold text-gray-400 mt-1 w-6 shrink-0">{v.verse}</span>
+                  <div className="flex-1">
+                    <p className="text-lg leading-relaxed text-gray-800 font-serif">
+                      {v.text}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => handleFavoriteClick(v)}
+                    className={`h-8 w-8 flex items-center justify-center rounded-full transition ${isFavorited(v) ? 'bg-red-50' : 'bg-transparent'}`}
+                  >
+                    <Heart
+                      size={18}
+                      className={isFavorited(v) ? "fill-red-500 text-red-500" : "text-gray-300"}
+                    />
+                  </button>
                 </div>
-                <button
-                  onClick={() => handleFavoriteClick(v)}
-                  className={`h-8 w-8 flex items-center justify-center rounded-full transition ${isFavorited(v) ? 'bg-red-50' : 'bg-transparent'}`}
-                >
-                  <Heart
-                    size={18}
-                    className={isFavorited(v) ? "fill-red-500 text-red-500" : "text-gray-300"}
-                  />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Toast Notification */}
@@ -203,6 +201,7 @@ const BibleView: React.FC<BibleViewProps> = ({ initialBookId, initialChapter, on
       )}
     </div>
   );
+
 
   return (
     <div className="h-full flex flex-col">

@@ -35,7 +35,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ settings, onUpdateSettings 
       {/* Plan Settings */}
       <div className="mb-6">
         <h2 className="text-sm text-gray-500 mb-2 ml-2">讀經計畫</h2>
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="bg-white rounded-xl shadow-sm">
           <div className="p-4 flex justify-between items-center border-b border-gray-100">
             <span className="text-base">開始日期</span>
             <input
@@ -47,7 +47,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ settings, onUpdateSettings 
           </div>
           <div className="relative">
             <div
-              className="p-4 flex justify-between items-center cursor-pointer"
+              className="p-4 flex justify-between items-center cursor-pointer rounded-b-xl"
               onClick={() => setShowVersionPicker(!showVersionPicker)}
             >
               <span className="text-base">聖經版本</span>
@@ -57,7 +57,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ settings, onUpdateSettings 
               </div>
             </div>
             {showVersionPicker && (
-              <div className="absolute right-4 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 w-64">
+              <div className="absolute right-0 left-0 top-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 mx-4">
                 {BIBLE_VERSIONS.map((version) => (
                   <div
                     key={version.id}

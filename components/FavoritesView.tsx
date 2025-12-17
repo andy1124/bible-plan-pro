@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Verse } from '../types';
-import { Trash2, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trash2, Quote, ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 
 interface FavoritesViewProps {
   favorites: Verse[];
@@ -12,6 +12,22 @@ const ITEMS_PER_PAGE = 20;
 const FavoritesView: React.FC<FavoritesViewProps> = ({ favorites, onRemove }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [verseToDelete, setVerseToDelete] = useState<Verse | null>(null);
+
+  const handleDeleteClick = (verse: Verse) => {
+    setVerseToDelete(verse);
+  };
+
+  const handleConfirmDelete = () => {
+    if (verseToDelete) {
+      onRemove(verseToDelete);
+      setVerseToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setVerseToDelete(null);
+  };
 
   const totalPages = useMemo(() => Math.ceil(favorites.length / ITEMS_PER_PAGE), [favorites.length]);
 
@@ -131,12 +147,12 @@ const FavoritesView: React.FC<FavoritesViewProps> = ({ favorites, onRemove }) =>
       ) : (
         /* Scrollable Content Area */
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 pb-24">
-          <div className="space-y-4">
+          <div className="space-y-2">
             {currentFavorites.map((fav, index) => (
               <div key={`${fav.bookId}-${fav.chapter}-${fav.verse}`} className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 relative group">
                 <div className="mb-3">
-                  <Quote className="text-red-100 fill-red-50 mb-2" size={24} />
-                  <p className="text-gray-800 text-lg font-serif leading-relaxed">
+                  <Quote className="text-red-100 fill-red-50 mb-2" size={14} />
+                  <p className="text-gray-800 font-serif leading-relaxed">
                     {fav.text}
                   </p>
                 </div>
@@ -145,10 +161,10 @@ const FavoritesView: React.FC<FavoritesViewProps> = ({ favorites, onRemove }) =>
                     {fav.bookName} {fav.chapter}:{fav.verse}
                   </span>
                   <button
-                    onClick={() => onRemove(fav)}
+                    onClick={() => handleDeleteClick(fav)}
                     className="p-2 text-gray-300 hover:text-red-500 transition"
                   >
-                    <Trash2 size={18} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </div>
@@ -157,6 +173,41 @@ const FavoritesView: React.FC<FavoritesViewProps> = ({ favorites, onRemove }) =>
 
           {/* Pagination - at the bottom of scrollable area */}
           {renderPagination()}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {verseToDelete && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-6">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
+            <div className="p-6 text-center">
+              <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <AlertTriangle className="text-red-500" size={28} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-800 mb-2">確定要刪除這則金句？</h3>
+              <p className="text-gray-500 text-sm mb-2">
+                {verseToDelete.bookName} {verseToDelete.chapter}:{verseToDelete.verse}
+              </p>
+              <p className="text-gray-400 text-xs line-clamp-2">
+                「{verseToDelete.text.slice(0, 50)}{verseToDelete.text.length > 50 ? '...' : ''}」
+              </p>
+            </div>
+            <div className="flex border-t border-gray-100">
+              <button
+                onClick={handleCancelDelete}
+                className="flex-1 py-4 text-gray-600 font-medium hover:bg-gray-50 transition"
+              >
+                取消
+              </button>
+              <div className="w-px bg-gray-100"></div>
+              <button
+                onClick={handleConfirmDelete}
+                className="flex-1 py-4 text-red-500 font-medium hover:bg-red-50 transition"
+              >
+                刪除
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
