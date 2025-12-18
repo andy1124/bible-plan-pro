@@ -80,7 +80,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ settings, onUpdateSettings 
       </div>
 
       {/* Notification Settings */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <h2 className="text-sm text-gray-500 mb-2 ml-2">通知</h2>
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 flex justify-between items-center border-b border-gray-100">
@@ -106,10 +106,10 @@ const SettingsView: React.FC<SettingsViewProps> = ({ settings, onUpdateSettings 
             你將會在 {settings.notificationTime} 收到閱讀提醒
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* About */}
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-4 flex justify-between items-center">
             <span className="text-base">在 App Store 中評價</span>
@@ -119,7 +119,7 @@ const SettingsView: React.FC<SettingsViewProps> = ({ settings, onUpdateSettings 
         <div className="mt-8 text-center text-gray-400 text-sm">
           Version: 1.3.0 (Bible Content Update)
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
