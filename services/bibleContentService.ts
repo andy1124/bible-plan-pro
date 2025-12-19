@@ -52,7 +52,7 @@ const BOOK_ID_TO_ABBREV: Record<string, string> = {
     '1Th': '1ts', '2Th': '2ts', '1Ti': '1tm', '2Ti': '2tm',
     'Tit': 'tt', 'Phm': 'phm', 'Heb': 'hb', 'Jas': 'jm',
     '1Pe': '1pe', '2Pe': '2pe', '1Jn': '1jo', '2Jn': '2jo',
-    '3Jn': '3jo', 'Jud': 'jd', 'Rev': 'rv',
+    '3Jn': '3jo', 'Jud': 'jd', 'Rev': 're',
 };
 
 // Cache for loaded Bible data

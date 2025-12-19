@@ -39,7 +39,7 @@ const BOOK_NAME_TO_ABBREV: Record<string, string> = {
     '帖撒羅尼迦前書': '1ts', '帖撒羅尼迦後書': '2ts', '提摩太前書': '1tm', '提摩太後書': '2tm',
     '提多書': 'tt', '腓利門書': 'phm', '希伯來書': 'hb', '雅各書': 'jm',
     '彼得前書': '1pe', '彼得後書': '2pe', '約翰一書': '1jo', '約翰二書': '2jo',
-    '約翰三書': '3jo', '猶大書': 'jd', '啟示錄': 'rv',
+    '約翰三書': '3jo', '猶大書': 'jd', '啟示錄': 're',
 };
 
 // Get base URL for correct path in both dev and production (GitHub Pages)
