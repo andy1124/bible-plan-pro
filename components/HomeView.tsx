@@ -143,14 +143,14 @@ const HomeView: React.FC<HomeViewProps> = ({ settings, checkedReadings, onToggle
                   className="focus:outline-none"
                 >
                   {isChecked ? (
-                    <CheckCircle className="text-gray-400" size={28} />
+                    <CheckCircle className="text-green-500" size={28} />
                   ) : (
                     <Circle className="text-gray-300" size={28} />
                   )}
                 </button>
 
                 <div>
-                  <h3 className={`font-bold text-lg ${isChecked ? 'text-gray-400' : 'text-gray-800'}`}>
+                  <h3 className={`font-bold ${isChecked ? 'text-gray-400 line-through' : 'text-gray-800'}`}>
                     {book?.name}
                   </h3>
                   <p className="text-gray-500 text-sm">
