@@ -72,8 +72,12 @@ const BibleView: React.FC<BibleViewProps> = ({ initialBookId, initialChapter, on
     return favorites.some(fav => fav.bookId === v.bookId && fav.chapter === v.chapter && fav.verse === v.verse);
   };
 
+  const [toastMessage, setToastMessage] = useState('');
+
   const handleFavoriteClick = (v: Verse) => {
+    const willRemove = isFavorited(v);
     onAddToFavorites(v);
+    setToastMessage(willRemove ? '已取消收藏' : '已加入金句');
     setIsToastVisible(true);
     setTimeout(() => setIsToastVisible(false), 2000);
   };
@@ -196,7 +200,7 @@ const BibleView: React.FC<BibleViewProps> = ({ initialBookId, initialChapter, on
       {/* Toast Notification */}
       {isToastVisible && (
         <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-black/80 text-white px-6 py-3 rounded-full shadow-xl z-50 transition-opacity">
-          已加入金句
+          {toastMessage}
         </div>
       )}
     </div>

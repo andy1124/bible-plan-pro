@@ -104,12 +104,17 @@ function App() {
     setReadingTarget(null);
   };
 
-  const handleAddToFavorites = (verse: Verse) => {
+  const handleToggleFavorite = (verse: Verse) => {
     setFavorites(prev => {
-      // Avoid duplicates
-      if (prev.some(f => f.bookId === verse.bookId && f.chapter === verse.chapter && f.verse === verse.verse)) {
-        return prev;
+      const existingIndex = prev.findIndex(
+        f => f.bookId === verse.bookId && f.chapter === verse.chapter && f.verse === verse.verse
+      );
+
+      if (existingIndex !== -1) {
+        // Already favorited, remove it
+        return prev.filter((_, index) => index !== existingIndex);
       }
+      // Not favorited, add it
       return [...prev, verse];
     });
   };
@@ -139,7 +144,7 @@ function App() {
           reading={readingTarget.reading}
           dateStr={readingTarget.dateStr}
           onBack={handleCloseReading}
-          onAddToFavorites={handleAddToFavorites}
+          onAddToFavorites={handleToggleFavorite}
           favorites={favorites}
           settings={settings}
         />
@@ -170,7 +175,7 @@ function App() {
           <BibleView
             initialBookId={navTarget?.bookId}
             initialChapter={navTarget?.chapter}
-            onAddToFavorites={handleAddToFavorites}
+            onAddToFavorites={handleToggleFavorite}
             favorites={favorites}
             settings={settings}
           />
