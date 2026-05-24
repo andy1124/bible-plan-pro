@@ -37,9 +37,9 @@ export const BIBLE_VERSIONS: BibleVersionInfo[] = [
 const BOOK_ID_TO_ABBREV: Record<string, string> = {
     // Old Testament
     'Gen': 'gn', 'Exo': 'ex', 'Lev': 'lv', 'Num': 'nm', 'Deu': 'dt',
-    'Jos': 'js', 'Jdg': 'jg', 'Rut': 'rt', '1Sa': '1sm', '2Sa': '2sm',
+    'Jos': 'js', 'Jdg': 'jud', 'Rut': 'rt', '1Sa': '1sm', '2Sa': '2sm',
     '1Ki': '1kgs', '2Ki': '2kgs', '1Ch': '1ch', '2Ch': '2ch',
-    'Ezr': 'ezr', 'Neh': 'ne', 'Est': 'et', 'Job': 'jb',
+    'Ezr': 'ezr', 'Neh': 'ne', 'Est': 'et', 'Job': 'job',
     'Psa': 'ps', 'Pro': 'prv', 'Ecc': 'ec', 'Sng': 'so',
     'Isa': 'is', 'Jer': 'jr', 'Lam': 'lm', 'Ezk': 'ez',
     'Dan': 'dn', 'Hos': 'ho', 'Jol': 'jl', 'Amo': 'am',
