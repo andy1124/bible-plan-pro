@@ -52,6 +52,10 @@ function App() {
 
   const [planLoaded, setPlanLoaded] = useState(false);
 
+  // PlanView date state — lifted here so it survives ReadingView overlay
+  const [planSelectedDate, setPlanSelectedDate] = useState(new Date());
+  const [planCurrentMonth, setPlanCurrentMonth] = useState(new Date());
+
   // --- Effects ---
 
   // Initialize plan and Bible data on app startup
@@ -201,6 +205,10 @@ function App() {
             checkedReadings={checkedReadings}
             onToggleCheck={handleToggleCheck}
             onNavigateToReading={handleNavigateToReading}
+            selectedDate={planSelectedDate}
+            onSelectedDateChange={setPlanSelectedDate}
+            currentMonth={planCurrentMonth}
+            onCurrentMonthChange={setPlanCurrentMonth}
           />
         );
       case Tab.BIBLE:

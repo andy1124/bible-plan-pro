@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { UserSettings, CheckList, PlanDay } from '../types';
 import { getPlanForDate, getBookById, getDayNumberForDate } from '../services/bibleService';
 import {
@@ -23,6 +23,10 @@ interface PlanViewProps {
   checkedReadings: CheckList;
   onToggleCheck: (key: string) => void;
   onNavigateToReading: (reading: PlanDay['readings'][0], dateStr: string) => void;
+  selectedDate: Date;
+  onSelectedDateChange: (date: Date) => void;
+  currentMonth: Date;
+  onCurrentMonthChange: (month: Date) => void;
 }
 
 const TOTAL_PLAN_DAYS = 365;
@@ -84,9 +88,16 @@ const isDayPartiallyCompleted = (date: Date, startDateStr: string, checkedReadin
   });
 };
 
-const PlanView: React.FC<PlanViewProps> = ({ settings, checkedReadings, onToggleCheck, onNavigateToReading }) => {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState(new Date());
+const PlanView: React.FC<PlanViewProps> = ({
+  settings,
+  checkedReadings,
+  onToggleCheck,
+  onNavigateToReading,
+  selectedDate,
+  onSelectedDateChange,
+  currentMonth,
+  onCurrentMonthChange,
+}) => {
   const today = new Date();
 
   const plan = getPlanForDate(selectedDate, settings.startDate);
@@ -110,15 +121,15 @@ const PlanView: React.FC<PlanViewProps> = ({ settings, checkedReadings, onToggle
     return days;
   }, [currentMonth]);
 
-  const handlePrevMonth = () => setCurrentMonth(prev => subMonths(prev, 1));
-  const handleNextMonth = () => setCurrentMonth(prev => addMonths(prev, 1));
+  const handlePrevMonth = () => onCurrentMonthChange(subMonths(currentMonth, 1));
+  const handleNextMonth = () => onCurrentMonthChange(addMonths(currentMonth, 1));
   const handleToday = () => {
-    setSelectedDate(new Date());
-    setCurrentMonth(new Date());
+    onSelectedDateChange(new Date());
+    onCurrentMonthChange(new Date());
   };
 
   const handleDateSelect = (date: Date) => {
-    setSelectedDate(date);
+    onSelectedDateChange(date);
   };
 
   // Get the status indicator for a date
