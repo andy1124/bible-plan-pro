@@ -123,6 +123,39 @@ function App() {
     setFavorites(prev => prev.filter(f => !(f.bookId === verse.bookId && f.chapter === verse.chapter && f.verse === verse.verse)));
   };
 
+  // --- Backup / Restore ---
+
+  const handleExportData = (): string => {
+    const data = {
+      version: '1.0',
+      exportedAt: new Date().toISOString(),
+      settings,
+      checks: checkedReadings,
+      favorites,
+    };
+    return JSON.stringify(data, null, 2);
+  };
+
+  const handleImportData = (jsonStr: string): boolean => {
+    try {
+      const data = JSON.parse(jsonStr);
+      if (
+        !data.version ||
+        !data.settings ||
+        data.checks === undefined ||
+        !Array.isArray(data.favorites)
+      ) {
+        return false;
+      }
+      setSettings(data.settings);
+      setCheckedReadings(data.checks);
+      setFavorites(data.favorites);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   const handleTabChange = (tab: Tab) => {
     setActiveTab(tab);
     // Reset nav target if navigating away from Bible manually, 
@@ -192,6 +225,8 @@ function App() {
           <SettingsView
             settings={settings}
             onUpdateSettings={setSettings}
+            onExportData={handleExportData}
+            onImportData={handleImportData}
           />
         );
       default:
